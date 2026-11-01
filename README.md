@@ -27,7 +27,11 @@ I published the **Market Segment Dashboard**. It answers: *how are orders split 
 ![Market Segment Dashboard](screenshots/1c_dashboard.png)
 
 ### Create a Space and chat agent grounded in the workshop data
-I created the **Customer Revenue & Segmentation** Space and the **Revenue Analytics Assistant** chat agent. When I asked it to compare revenue across segments over time, it said the dataset has no date columns, so a quarterly comparison isn't possible. It then answered from the data it does have: total revenue by segment, from BUILDING ($436.36B) to HOUSEHOLD ($434.84B).
+I created the **Customer Revenue & Segmentation** Space with the `mv_customer_revenue` dataset, the Market Segment Dashboard and a `Nation.csv` reference file.
+
+![Customer Revenue & Segmentation Space](screenshots/1d_space.png)
+
+I then created the **Revenue Analytics Assistant** chat agent on top of it. When I asked it to compare revenue across segments over time, it said the dataset has no date columns, so a quarterly comparison isn't possible. It then answered from the data it does have: total revenue by segment, from BUILDING ($436.36B) to HOUSEHOLD ($434.84B).
 
 ![Revenue Analytics Assistant answer](screenshots/1d_agent_answer.png)
 
@@ -70,9 +74,9 @@ I built the same TPC-H data in three storage formats:
 ![orders_iceberg query](screenshots/3a_orders_iceberg.png)
 
 ### Prepare and join Quick datasets
-I created Quick datasets for each table through the `tpch-lakehouse-athena` data source ([customer_csv dataset](screenshots/3b_customer_csv_dataset.png)). I then built **TPC-H Unified (Joined)**, which combines customer, order and line-item columns: customers to orders on the customer key, and orders to line items on the order key. It has 17 columns and 15,708,187 rows in SPICE.
+I created Quick datasets for each table through the `tpch-lakehouse-athena` data source ([customer_csv dataset](screenshots/3b_customer_csv_dataset.png)). I then built **TPC-H Unified (Joined)** with custom SQL that joins all three storage formats: line items from S3 Tables to the Iceberg orders on the order key, then to the CSV customers on the customer key. It has 17 columns and 15,708,187 rows in SPICE ([datasets list](screenshots/3b_quick_datasets.png)).
 
-![Quick datasets including the joined dataset](screenshots/3b_quick_datasets.png)
+![Join in the TPC-H Unified dataset](screenshots/3b_join_setup.png)
 
 ### Build a Topic and publish a dashboard
 I created the **TPC-H Analytics** Topic over the TPC-H customer, order and line-item data ([Topic screenshot](screenshots/3c_topic.png)). I published the **TPC-H Lakehouse Analytics** dashboard, with Executive Overview and Customer & Operations sheets.
