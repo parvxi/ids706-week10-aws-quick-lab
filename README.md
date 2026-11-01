@@ -3,11 +3,11 @@
 **Course:** IDS 706.01.Fa26
 **Name:** Shahad Baalkhashir
 
-This README documents the five labs from the *Better together: Amazon Quick, Redshift and Athena* workshop. Each section follows the grading breakdown and shows the key screenshot for that item. Supporting screenshots are linked, and all of them are in the [`screenshots/`](screenshots/) folder.
+This README documents my work on the five labs from the *Better together: Amazon Quick, Redshift and Athena* workshop. The main screenshots are shown below. A few extra ones are linked, and all of them are in the [`screenshots/`](screenshots/) folder.
 
 ---
 
-## Track 1: Modernize BI Workloads (20 pts)
+## Track 1: Modernize BI Workloads
 
 ### Load and verify Redshift data and the revenue materialized view
 I created the `customer`, `orders` and `lineitem` tables on the provisioned Redshift cluster and loaded the 10 GB TPC-H data from S3 with `COPY`. The row counts confirm the load: 1,500,000 customers, 15,000,000 orders and 59,986,052 line items.
@@ -33,7 +33,7 @@ I created the **Customer Revenue & Segmentation** Space and the **Revenue Analyt
 
 ---
 
-## Track 2: Explore Quick Desktop (20 pts)
+## Track 2: Explore Quick Desktop
 
 ### Signed-in Desktop session and working AWS MCP connection
 I set up AWS CLI credentials in `~/.aws/credentials`, verified them with `aws sts get-caller-identity`, and added a local MCP connector in Quick Desktop that runs `mcp-proxy-for-aws`. The screenshot shows my signed-in account and the 8 tools the server exposes. My version lists `run_script` (which runs boto3 code against my account) instead of the `call_aws` tool named in the workshop, but it does the same job.
@@ -56,7 +56,7 @@ To check the answer, I asked Quick to show the SQL it ran ([screenshot](screensh
 
 ---
 
-## Track 3: Agentic AI Analytics with Athena and Quick (20 pts)
+## Track 3: Agentic AI Analytics with Athena and Quick
 
 ### Create and query the lakehouse tables
 I built the same TPC-H data in three storage formats:
@@ -88,7 +88,7 @@ My first answer from the agent had no citation, because I had added only the Top
 
 ---
 
-## Track 4: Hospital Operations BI with Quick (20 pts)
+## Track 4: Hospital Operations BI with Quick
 
 ### Prepare the Redshift warehouse and working Quick data sources
 On the Redshift Serverless workgroup `redshift-dw-wg`, I created the `hospital_ops` schema, loaded the three JSON domains from S3 (1000 patient-flow, 800 discharge-barrier and 600 transfer records), and built three materialized views ([mv_unit_capacity result](screenshots/4a_redshift_mv.png)).
@@ -118,7 +118,7 @@ I ran all three Flows: the Daily Capacity Forecast, the Discharge Barrier Escala
 
 ---
 
-## Track 5: Athena Direct Query to SPICE with Quick (20 pts)
+## Track 5: Athena Direct Query to SPICE with Quick
 
 ### Query raw S3 data and record a baseline
 I ran monthly net revenue by market segment (June–December 1998) directly on the raw TPC-H CSV files. **Baseline: 6.822 s, 92.27 GB scanned.** A second run took 6.456 s and scanned the same amount ([screenshot](screenshots/5a_baseline_query_run2.png)). CSV is not columnar and these files are not partitioned, so Athena has to read every file in full even with a date filter.
@@ -155,10 +155,6 @@ I loaded only what a fast dashboard needs into SPICE: 4 columns (`order_month`, 
 ---
 
 ## Issues I ran into
-- **AWS credentials file:** The workshop's credential panel gives shell `export` commands, but `~/.aws/credentials` needs a `[default]` section with `key = value` lines.
-- **Quick Desktop could not start `uvx`:** Desktop apps don't inherit the terminal's PATH, so I used the full path `/opt/homebrew/bin/uvx`.
-- **Quick couldn't see my Redshift tables:** Quick connects as `IAMR:WSParticipantRole`, so I granted `SELECT` to that user (via `PUBLIC`).
-- **Hospital tables on the wrong Redshift:** I first ran the Track 4 SQL on the provisioned cluster, but Quick's data source points to the Serverless workgroup. I reloaded the tables there.
-- **S3 Tables bucket name "already taken":** I was creating a general purpose bucket, but the step needed a table bucket, which only has to be unique within my account.
+- **Quick couldn't see my Redshift tables:** Quick connects as `IAMR:WSParticipantRole`, not `awsuser`, so I granted `SELECT` on the `public` schema.
+- **Hospital tables on the wrong Redshift:** I first ran the Track 4 SQL on the provisioned cluster, but Quick's data source points to the Serverless workgroup, so I reloaded the tables there.
 - **`PERMISSION_DENIED` from Athena in Track 5:** Track 4 had switched Quick to `cfn-QuickRole`, which can't read the public TPC-H bucket. I switched back to the Quick-managed role and granted S3 access to the workshop buckets and `redshift-downloads`.
-- **Agent with no citations:** The Space was missing the knowledge base. Adding it fixed the sources.
